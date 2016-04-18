@@ -3,64 +3,66 @@
 <head>
   <title>Leaflet Quick Start Guide Example</title>
   <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
 </head>
 <body>
-  <div class="col-lg-2 col-centered">
-  <h1> Free tracking </h1>
-</div>
-  <div>
-  <div id="map" style="width: 100%; height: 400px"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
-  <script>
-    var map = L.map('map').setView([51.92, 4.48], 14);
+  <div class="col-lg-1 col-centered">
+  <h1>Geotracking </h1>
+</div>
+
+<%# render map through rails gem %>
+  <div id="map" style="width: 100%; height: 400px">
+      <script>
+
+      if (gon.exif.length == 0){
+        var map = L.map('map').setView([51.92, 4.48], 14);
+      }
+      else{
+        var last_element = gon.exif[gon.exif.length -1]
+        var map = L.map('map').setView([last_element[0], last_element[1]], 14);
+        }
+    
+    
 
     L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    var LeafIcon = L.Icon.extend({
-      options: {
-        iconSize:     [40, 40],
-        //iconAnchor:   [22, 94],
-        //popupAnchor:  [-3, -76]
-      }
-    });
 
 
-    L.marker([51.922138277777776, 4.483124222222222]).bindPopup('picture taken at 2016-04-09 01:06:15 +0200 by David').addTo(map);
-    L.marker([51.92176394444444, 4.484378555555556]).bindPopup('picture taken at 2016-04-09 01:10:50 +0200 by David').addTo(map);
-    L.marker([51.92162, 4.4844522499999995]).bindPopup('picture taken at 2016-04-09 01:11:11 +0200 by David').addTo(map);
-    L.marker([51.920145138888884, 4.488259972222222]).bindPopup('picture taken at 2016-04-09 01:16:13 +0200 by David').addTo(map);
-    L.marker([51.92009205555556, 4.488264166666667]).bindPopup('picture taken at 2016-04-09 01:16:36 +0200 by David').addTo(map);
-    L.marker([51.91682044444445, 4.491165416666667]).bindPopup('picture taken at 2016-04-09 01:21:19 +0200 by David').addTo(map);
-    L.marker([51.912328555555554, 4.484453194444444]).bindPopup('picture taken at 2016-04-09 01:28:26 +0200 by David').addTo(map);
-    L.marker([51.91230544444444, 4.484380944444444]).bindPopup('picture taken at 2016-04-09 01:28:57 +0200 by David').addTo(map);
-    L.marker([51.91238886111111, 4.484202555555555]).bindPopup('picture taken at 2016-04-09 01:29:12 +0200 by David').addTo(map);
-    L.marker([51.91569558333333, 4.482100027777778]).bindPopup('picture taken at 2016-04-09 01:33:54 +0200 by David').addTo(map);
-    L.marker([51.91601175, 4.482318444444444]).bindPopup('picture taken at 2016-04-09 01:34:24 +0200 by David').addTo(map);
-    L.marker([51.91988394444444, 4.480122472222222]).bindPopup('picture taken at 2016-04-09 01:40:46 +0200 by David').addTo(map);
+  //  L.marker([51.922138277777776, 4.483124222222222]).bindPopup('picture taken at 2016-04-09 01:06:15 +0200 by David').addTo(map);
+    for (i=0; i<gon.exif.length; i++){
+      L.marker([gon.exif[i][0],gon.exif[i][1]]).bindPopup(gon.exif[i][2]).addTo(map);
+    }
+    //L.marker([gon.exif[0][0], gon.exif[0][1]]).bindPopup('picture taken at 2016-04-09 01:06:15 +0200 by David').addTo(map);
+  
+    //L.marker([51.92,4.48])
 
-  </script>
-</div>
+    </script>
+ </div>
+  <%#= image_tag Proof.last.picture.url %>
     <section class="success" id="about">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2>About</h2>
+                    <h2>Try it</h2>
                     <hr class="star-light">
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-4 col-lg-offset-2">
-                    <p>This evening I hacked together a solution for the tracking problem with our constraints (cost, limited data) in mind. The result is completely free, and reliant on GPS satellites (not mobile data).</p>
+                    <p><%= form_for(@proof, html: {multipart: true}) do |f|%>
+                        <%= f.file_field :picture, accept: 'image/jpeg,image/gif,image/png', required: 'required' %>
+                       
+                        <%= f.submit "Add to map", class: "btn btn-lg btn-outline"%><% end %></p>
                 </div>
                 <div class="col-lg-4">
-                    <p>After taking pics around the city with cellular data turned off, I returned home and connected to wifi. The files were then uploaded to Dropbox. To create the map above, I did some automation and stripped the location data and timestamps from the pictures.</p>
+                    <p>Make sure your camera app is saving GPS and timestamps.</p>
                 </div>
                 
             </div>

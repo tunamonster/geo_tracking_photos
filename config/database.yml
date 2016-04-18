@@ -1,8 +1,6 @@
 development: &development
   adapter: postgresql
   database: Your_database_name
-  username: user_name
-  password: password
   host:     localhost
   schema_search_path: public
   min_messages: warning
