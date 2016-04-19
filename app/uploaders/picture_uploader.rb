@@ -1,8 +1,10 @@
 # encoding: utf-8
 
 class PictureUploader < CarrierWave::Uploader::Base
+require 'carrierwave/processing/mini_magick'
 include CarrierWave::MiniMagick
-  process resize_to_limit: [400, 400]
+process :resize_to_fill => [250, 300]
+
 
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
