@@ -4,7 +4,7 @@ class ProofsController < ApplicationController
 		if @proof.save
 			flash[:success] = "Photo uploaded at #{@proof.latitude}, #{@proof.longitude}"
 		else
-			flash[:error] = @proof.errors.full_messages	
+			flash[:warning] = @proof.errors.full_messages.each {|error| puts error}	
 		end
       redirect_to root_url
 	end
