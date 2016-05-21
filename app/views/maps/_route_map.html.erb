@@ -1,0 +1,23 @@
+<script>
+    var map = L.map('route-map');
+L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+L.Routing.control({
+
+  waypoints: 
+    <%= @map_route.each {|ad| puts "L.latLng(#{ad}),"}%>,
+
+  router: L.Routing.mapzen('valhalla-3nES4Fs', {costing:'auto'}),
+  formatter: new L.Routing.mapzenFormatter(),
+  summaryTemplate:'<div class="start">{name}</div><div class="info {costing}">{distance}, {time}</div>',
+  addWaypoints: false,
+  show: false
+}).addTo(map); 
+var geocoder = L.control.geocoder('search-jox3rEQ').addTo(map);
+
+
+map.scrollWheelZoom.disable();
+
+  </script>

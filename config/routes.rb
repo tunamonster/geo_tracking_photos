@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
   root 'maps#home'
   resources :proofs, only: [:create, :destroy]
+  resources :packages, only: [:create, :destroy]
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
 

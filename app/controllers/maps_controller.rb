@@ -1,14 +1,19 @@
 class MapsController < ApplicationController
 		def home
 			@proof = Proof.new#(proof_params)
-			p_a = []
-
-			Proof.all.each do |p|
-			p_a << [p.latitude, p.longitude, p.taken_at, p.picture.url]
+			@route = []
+			5.times do 
+				@route << Package.new
 			end
-	
-						gon.exif = p_a
 
+			gon.exif = []
+			Proof.all.each { |p| gon.exif << [p.latitude, p.longitude, p.taken_at, p.picture.url] }
+
+			@oo = optimized_order
+			@group = []
+				
+			@map_route = []
+			optimized_order.each {|coords| @map_route << [coords[2], coords[1]]} #[gon.route << address, lat, long]
 		end
 
 
