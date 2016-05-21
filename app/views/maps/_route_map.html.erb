@@ -1,8 +1,9 @@
 <script>
-    var map = L.map('route-map');
+    var map = L.map('route-map').setView([16.826,96.1551], 13);
 L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+
 
 L.Routing.control({
 

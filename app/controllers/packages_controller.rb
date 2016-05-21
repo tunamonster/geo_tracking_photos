@@ -12,11 +12,11 @@ class PackagesController < ApplicationController
 				if package["address"] != ""
 					@pack = Package.create(package_params(package))					
 				end
-		if @pack.save?
-			flash[:success] = "Locations added! The shortest route is #{optimized order}"
-		else
-			flash[:warning] = package.errors.full_messages.each {|error| puts error}
-		end
+		#if !@pack.nil?
+		#	flash[:success] = "Locations added! The shortest route is #{optimized order}"
+		#else
+		#	flash[:warning] = package.errors.full_messages.each {|error| puts error}
+		#end
 		
 		end			
 

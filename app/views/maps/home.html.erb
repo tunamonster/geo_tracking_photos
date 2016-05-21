@@ -4,21 +4,30 @@
 
   <div id="route-map" style = "height: 450px;"></div>
   <%= render 'route_map' %>
+
     <section class="success" id="about">
         <div class="container">
             <div class="row">
-              Showing route for <%= @oo.each {|loc| puts loc[0]} %>
+              <% if @oo.count > 0 %>
+              <%= "Showing route for" %>
+              <%= @oo.each {|loc| puts loc[0]} %>
+              <% else %> 
+              <%= "No routes in the database yet" %>
+              <% end %>
+
                 <div class="col-lg-12 text-center">
                     <h2>Try it</h2>
                     <hr>
                 </div>
             </div>
-            <div class="row">
-              <%= render 'route_form' %>
-              <%= render 'photo_form' %>            
-            </div>
+
+        <%= render 'route_form' %>
         </div>
 <%= render 'photo_map' %>
+<%= render 'photo_form' %>            
+<p> </p>
+
+
     </section>
 
 

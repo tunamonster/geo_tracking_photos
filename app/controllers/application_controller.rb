@@ -4,38 +4,46 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   def optimized_order #calls Mapquest API to order input to minimize travel time
-    group = []
-    anchor = Package.last.created_at
-    lim = 5.seconds
-     
-    min = anchor - lim
-    max =  anchor + lim 
 
-    Package.where(created_at: min..max).each {|package| group << "#{package.address}"}
-    #cache check here
-    #if cache matches, optimized_locations = cache 
-    #else 
+  if Package.count > 1  
+      group = []
+      anchor = Package.last.created_at
+      lim = 5.seconds
+       
+      min = anchor - lim
+      max =  anchor + lim 
 
-  	#initialize API
-  url = URI("http://www.mapquestapi.com/directions/v2/optimizedroute?key=sXUK5TTzyRju00qjsZ755oUZLCfB7LFS")
-	http = Net::HTTP.new(url.host, url.port)
-	request = Net::HTTP::Post.new(url)
-	request["cache-control"] = 'no-cache'
-	request["content-type"] = 'text/json'
-	request.body = "{locations: #{group} }"
-	response = http.request(request)
+      Package.where(created_at: min..max).each {|package| group << "#{package.address}"}
+      #cache check here
+      #if cache matches, optimized_locations = cache 
+      #else 
 
-	#handle response
-	response = JSON.parse(response.body)
-	optimized_order = response["route"]["locationSequence"]
-	optimized_locations = []
+    	#initialize API
+    url = URI("http://www.mapquestapi.com/directions/v2/optimizedroute?key=sXUK5TTzyRju00qjsZ755oUZLCfB7LFS")
+  	http = Net::HTTP.new(url.host, url.port)
+  	request = Net::HTTP::Post.new(url)
+  	request["cache-control"] = 'no-cache'
+  	request["content-type"] = 'text/json'
+  	request.body = "{locations: #{group} }"
+  	response = http.request(request)
 
-  optimized_order.each do |index|
-    p = Package.where(address: group[index]).last
-    optimized_locations << [p.address, p.latitude, p.longitude]
+  	#handle response
+  	response = JSON.parse(response.body)
+  	optimized_order = response["route"]["locationSequence"]
+  	optimized_locations = []
+
+    optimized_order.each do |index|
+      p = Package.where(address: group[index]).last
+      optimized_locations << [p.address, p.latitude, p.longitude]
+    end
+
+  	return optimized_locations
+
+  else 
+    optimized_locations = []
+
   end
 
-	return optimized_locations
   end
 
 end

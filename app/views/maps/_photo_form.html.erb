@@ -1,4 +1,4 @@
- <div class="col-lg-4 col-lg-offset-2">
+ <div class="col-lg-12 text-center">
                     <p><%= form_for(@proof, html: {multipart: true}) do |f|%>
                         <%= f.file_field :picture, accept: 'image/jpeg,image/gif,image/png', required: 'required' %>                    
                         <%= f.submit "Add to map", class: "btn btn-lg btn-outline"%>
