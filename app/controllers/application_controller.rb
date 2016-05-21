@@ -13,30 +13,48 @@ class ApplicationController < ActionController::Base
       min = anchor - lim
       max =  anchor + lim 
 
-      Package.where(created_at: min..max).each {|package| group << "#{package.address}"}
-      #cache check here
-      #if cache matches, optimized_locations = cache 
-      #else 
+      Package.where(created_at: min..max).each {|package| group << "#{package.address}"} 
 
-    	#initialize API
-    url = URI("http://www.mapquestapi.com/directions/v2/optimizedroute?key=sXUK5TTzyRju00qjsZ755oUZLCfB7LFS")
-  	http = Net::HTTP.new(url.host, url.port)
-  	request = Net::HTTP::Post.new(url)
-  	request["cache-control"] = 'no-cache'
-  	request["content-type"] = 'text/json'
-  	request.body = "{locations: #{group} }"
-  	response = http.request(request)
+      optimized_order = []
+      Route.all.each do |route|
+        optimized_order = route.order if route.order.sort == group.sort #search for match
+      end
 
-  	#handle response
-  	response = JSON.parse(response.body)
-  	optimized_order = response["route"]["locationSequence"]
-  	optimized_locations = []
+      optimized_locations = []
 
-    optimized_order.each do |index|
-      p = Package.where(address: group[index]).last
-      optimized_locations << [p.address, p.latitude, p.longitude]
+      if optimized_order != [] #route already calculated
+        optimized_order.each do |loc|
+          p = Package.where(address: loc).last
+          optimized_locations << [p.address, p.latitude, p.longitude]
+        end
+
+
+
+      else #call mapquest api to calculate new route
+
+      url = URI("http://www.mapquestapi.com/directions/v2/optimizedroute?key=sXUK5TTzyRju00qjsZ755oUZLCfB7LFS")
+    	http = Net::HTTP.new(url.host, url.port)
+    	request = Net::HTTP::Post.new(url)
+    	request["cache-control"] = 'no-cache'
+    	request["content-type"] = 'text/json'
+    	request.body = "{locations: #{group} }"
+    	response = http.request(request)
+
+    	#handle response
+    	response = JSON.parse(response.body)
+    	optimized_order = response["route"]["locationSequence"]
+
+      optimized_order.each do |index|
+        p = Package.where(address: group[index]).last
+        optimized_locations << [p.address, p.latitude, p.longitude]
+
+        new_route = []
+        optimized_locations.each {|loc| new_route << loc[0]} #address
+       Route.create(order: new_route ) #save new route
+        
     end
 
+  end
   	return optimized_locations
 
   else 
