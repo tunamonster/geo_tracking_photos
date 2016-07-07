@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   root 'maps#home'
   resources :proofs, only: [:create, :destroy]
   resources :packages, only: [:create, :destroy]
+  resources :ulocs, only: [:create, :update, :destroy]
+  
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
 

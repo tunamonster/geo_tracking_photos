@@ -1,12 +1,32 @@
+<button onclick="getLocation()">Locate me</button>
+
+<p id="demo"></p>
+
 <script>
-    var map = L.map('route-map').setView([16.826,96.1551], 13);
+var x = document.getElementById("demo");
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude;
+
+
+    var map = L.map('route-map').setView([position.coords.latitude,position.coords.longitude], 13);
 L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+var marker = L.marker([position.coords.latitude,position.coords.longitude]).addTo(map);
+marker.bindPopup("You are (probably) here!").openPopup();
 
 L.Routing.control({
-
   waypoints: 
     <%= @map_route.each {|ad| puts "L.latLng(#{ad}),"}%>,
 
@@ -14,11 +34,12 @@ L.Routing.control({
   formatter: new L.Routing.mapzenFormatter(),
   summaryTemplate:'<div class="start">{name}</div><div class="info {costing}">{distance}, {time}</div>',
   addWaypoints: false,
-  show: false
+  show: false,
+  fitSelectedRoutes: false
 }).addTo(map); 
 var geocoder = L.control.geocoder('search-jox3rEQ').addTo(map);
 
 
 map.scrollWheelZoom.disable();
-
+}
   </script>

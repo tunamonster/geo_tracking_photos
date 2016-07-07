@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   def optimized_order #calls Mapquest API to order input to minimize travel time
 
-  if Package.count > 1  
+  if Package.count > 1 
       group = []
       anchor = Package.last.created_at
       lim = 5.seconds

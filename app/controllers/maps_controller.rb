@@ -14,6 +14,7 @@ class MapsController < ApplicationController
 				
 			@map_route = []
 			optimized_order.each {|coords| @map_route << [coords[2], coords[1]]} #[gon.route << address, lat, long]
+			@uloc = Uloc.new
 		end
 
 
